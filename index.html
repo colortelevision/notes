@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <base href="https://website.local" />
+        <title>メモ帳</title>
+        <link rel="stylesheet" href="https://unpkg.com/98.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <style>
+            body {
+                padding: 20px;
+            }
+            #notepad {
+                width: 100%;
+                height: 300px;
+                margin-bottom: 10px;
+            }
+            .toolbar {
+                margin-bottom: 10px;
+            }
+            .toolbar button {
+                margin-right: 5px;
+            }
+        </style>
+    </head>
+    <body style="background-color: #008080">
+        <div class="window" style="width: 800px">
+            <div class="title-bar">
+                <div class="title-bar-text">メ モ 帳</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize"></button>
+                    <button aria-label="Maximize"></button>
+                    <button aria-label="Close"></button>
+                </div>
+            </div>
+            <div class="window-body">
+                <div class="toolbar">
+                    <button onclick="formatText('bold')">Bold</button>
+                    <button onclick="formatText('italic')">Italic</button>
+                    <select onchange="formatText('fontSize', this.value)">
+                        <option value="">Font Size</option>
+                        <option value="1">Small</option>
+                        <option value="3">Normal</option>
+                        <option value="5">Large</option>
+                        <option value="7">Extra Large</option>
+                    </select>
+                </div>
+                <textarea id="notepad" class="field-row-stacked"></textarea>
+                <div class="toolbar">
+                    <button onclick="saveAsTxt()">Save as.txt</button>
+                    <button onclick="exportAsPdf()">Export as.pdf</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function formatText(command, value) {
+                const notepad = document.querySelector("#notepad");
+                if (command === "bold") {
+                    notepad.style.fontWeight = "bold";
+                } else if (command === "italic") {
+                    notepad.style.fontStyle = "italic";
+                } else if (command === "fontSize") {
+                    notepad.style.fontSize = `${value}px`;
+                }
+            }
+
+            function saveAsTxt() {
+                const content = document.getElementById("notepad").value;
+                const blob = new Blob([content], { type: "text/plain" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "note.txt";
+                a.click();
+            }
+
+            function exportAsPdf() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const content = document.getElementById("notepad").value;
+                doc.text(content, 10, 10);
+                doc.save("note.pdf");
+            }
+        </script>
+    </body>
+</html>
